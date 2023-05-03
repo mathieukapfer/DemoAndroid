@@ -7,7 +7,6 @@ import android.graphics.Paint;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-
 class BouncingBall implements Runnable {
 
 	private Thread thread = null;
@@ -46,6 +45,7 @@ class BouncingBall implements Runnable {
 				screen_width = surf.getWidth();
 				screen_height = surf.getHeight();
 
+				// prepare the drawing surface
 				Canvas canvas = surfaceHolder.lockCanvas();
 				canvas.drawColor(Color.WHITE);
 

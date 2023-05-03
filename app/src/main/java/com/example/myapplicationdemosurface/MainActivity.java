@@ -16,7 +16,7 @@ public class MainActivity extends AppCompatActivity {
         // inflate xlm file res/layout/activity_main.xml
         setContentView(R.layout.activity_main);
 
-        // get surface previously inflated
+        // get ui components previously inflated
         SurfaceView surf = findViewById(R.id.surfaceView);
 
         // create ball view and attach layout
