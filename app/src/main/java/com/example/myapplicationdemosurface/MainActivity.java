@@ -7,7 +7,7 @@ import android.view.SurfaceView;
 
 public class MainActivity extends AppCompatActivity {
 
-	private BouncingBall bouncingBall;
+	private BouncingBallsView bouncingBallsView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,20 +20,20 @@ public class MainActivity extends AppCompatActivity {
         SurfaceView surf = findViewById(R.id.surfaceView);
 
         // create ball view and attach layout
-        bouncingBall = new BouncingBall(this, surf);
+        bouncingBallsView = new BouncingBallsView(this, surf);
 
     }
 
 	@Override
     protected void onResume() {
         super.onResume();
-        bouncingBall.resume();
+        bouncingBallsView.resume();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        bouncingBall.pause();
+        bouncingBallsView.pause();
     }
 
 }
