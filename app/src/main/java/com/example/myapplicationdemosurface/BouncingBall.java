@@ -1,5 +1,7 @@
 package com.example.myapplicationdemosurface;
 
+import java.util.Random;
+
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -7,11 +9,17 @@ import android.graphics.Paint;
 class BouncingBall {
 
     private Paint paint;
+    int randomColor = Color.BLACK;
+    boolean hasCrazyColor = false;
+    int crazyColorCounter =0;
+    boolean isColored = false;
+
+    private Random rand;
 
  	private int screen_width = 0;
 	private int screen_height = 0;
 
-	private int ball_radius = 20;
+    private int ball_radius = 20;
 	private int ball_x = 50;
 	private int ball_y = 0;
 	private float ball_speed_x = 5;
@@ -21,11 +29,40 @@ class BouncingBall {
     Canvas canvas;
 
     public BouncingBall() {
+
+        // define color of ball
         paint = new Paint();
 		paint.setColor(Color.BLACK);
+
+        // define random value.
+        // Note that it can be outisde the screen as 'Move' code will but it inside
+        // when screen sizes will be defined
+        rand = new Random();
+        ball_x = rand.nextInt(500);
+        ball_y = rand.nextInt(500);
+        ball_speed_x = 5+rand.nextInt(10);
+        ball_speed_y = rand.nextInt(10);
+
+        // color
+        hasCrazyColor = rand.nextInt(10)>7;
+        boolean isRed =   rand.nextBoolean();
+        boolean isGreen = rand.nextBoolean();
+        boolean isBlue =  rand.nextBoolean();
+        randomColor = Color.rgb(isRed?0xFF:0, isGreen?0xFF:0, isBlue?0xFF:0);
+        paint.setColor(randomColor);
     }
 
-    public void Move(int p_screen_width, int p_screen_height, Canvas p_canvas) {
+
+    public int Move(int p_screen_width, int p_screen_height, Canvas p_canvas) {
+
+
+        // special 'color' effect
+        if (hasCrazyColor && ((crazyColorCounter++)%10 == 0) ) {
+            randomColor = 0xFF000000 // keep alpha with max
+                    + (((randomColor & 0xFFFFFF) << 1 ) % 0xFFFFFF); // move luminance;
+            paint.setColor(randomColor);
+
+        }
 
         // update sceen size & canvas
         screen_width = p_screen_width;
@@ -58,5 +95,15 @@ class BouncingBall {
         // Draw the ball
         canvas.drawCircle(ball_x, ball_y, ball_radius, paint);
 
+        // reduce speed x when ball near ground
+        // (speed y is reduced by numerical rounding)
+        int ball_height = (screen_height - ball_y);
+
+        if (ball_height < 1.5 * ball_radius) {
+            ball_speed_x *= 0.99;
+            ball_speed_y *= 0.999;
+        }
+
+        return (ball_height) ;
     }
 }

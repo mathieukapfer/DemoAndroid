@@ -9,6 +9,9 @@ import android.view.SurfaceView;
 
 import com.example.myapplicationdemosurface.BouncingBall;
 
+import java.net.BindException;
+import java.util.Vector;
+
 class BouncingBallsView implements Runnable {
 
 	private Thread thread = null;
@@ -17,7 +20,7 @@ class BouncingBallsView implements Runnable {
 	private volatile boolean running = false;
 
 	private Paint paint;
-    private BouncingBall bouncingBall;
+    private Vector<BouncingBall> bouncingBallArray;
 
 	public BouncingBallsView(Context p_context, SurfaceView p_surf) {
 		//super(context);
@@ -28,7 +31,11 @@ class BouncingBallsView implements Runnable {
 		paint = new Paint();
 		paint.setColor(Color.BLACK);
 
-        bouncingBall = new BouncingBall();
+        bouncingBallArray = new Vector<BouncingBall>();
+
+		for (int index=0;index<2;index++) {
+			bouncingBallArray.add(new BouncingBall());
+		}
 	}
 
 	@Override
@@ -37,12 +44,25 @@ class BouncingBallsView implements Runnable {
 		while (running) {
 			if (surfaceHolder.getSurface().isValid()) {
 
+				int sum =0;
 				// prepare the drawing surface
 				Canvas canvas = surfaceHolder.lockCanvas();
-				canvas.drawColor(Color.WHITE);
+				canvas.drawColor(0xFFBBBBBB);
 
                 // update ball
-                bouncingBall.Move(surf.getWidth(), surf.getHeight(), canvas);
+				for(BouncingBall b: bouncingBallArray) {
+					sum += b.Move(surf.getWidth(), surf.getHeight(), canvas);
+				}
+
+				// no more ball in the air then add new ball
+				if (bouncingBallArray.size() == 0 ||
+						sum / bouncingBallArray.size() < 0.2 * surf.getHeight()) {
+					bouncingBallArray.add(new BouncingBall());
+				}
+
+				if (bouncingBallArray.size() > 10) {
+					bouncingBallArray.remove(0);
+				}
 
 				// Unlock the canvas and update the screen
 				surfaceHolder.unlockCanvasAndPost(canvas);
