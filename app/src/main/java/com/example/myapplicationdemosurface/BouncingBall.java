@@ -10,91 +10,86 @@ import android.graphics.Paint;
 
 class BouncingBall {
 
-    private Paint paint;
-    int randomColor = Color.BLACK;
-    boolean hasCrazyColor = false;
-    int crazyColorCounter =0;
-    boolean isColored = false;
+    private Paint mPaint;
 
-    private Random rand;
+    private Random mRand;
 
- 	private int screen_width = 0;
-	private int screen_height = 0;
+ 	private int mScreenWidth = 0;
+	private int mScreenHeight = 0;
 
-    private int ball_radius = 20;
-	private int ball_x = 50;
-	private int ball_y = 0;
-	private float ball_speed_x = 5;
-	private float ball_speed_y = 5;
-	private float gravity = 0.9f;
+    private int mBallRadius = 20;
+	private int mBallX = 50;
+	private int mBallY = 0;
+	private float mBallSpeedX = 5;
+	private float mBallSpeedy = 5;
+	private float mGravity = 0.9f;
 
     Canvas canvas;
 
     public BouncingBall() {
 
         // define color of ball
-        paint = new Paint();
-		paint.setColor(Color.BLACK);
+        mPaint = new Paint();
+		mPaint.setColor(Color.BLACK);
 
         // define random value.
         // Note that it can be outside the screen as 'Move' code will but it inside
         // when screen sizes will be defined
-        rand = new Random();
-        ball_x = rand.nextInt(500);
-        ball_y = rand.nextInt(500);
-        ball_speed_x += 10 + rand.nextInt(10);
-        ball_speed_y += 10 + rand.nextInt(20);
+        mRand = new Random();
+        mBallX = mRand.nextInt(500);
+        mBallY = mRand.nextInt(500);
+        mBallSpeedX += 10 + mRand.nextInt(10);
+        mBallSpeedy += 10 + mRand.nextInt(20);
 
         // color
         boolean isRed =   true; //rand.nextBoolean();
-        boolean isGreen = rand.nextBoolean();
-        boolean isBlue =  rand.nextBoolean();
-        randomColor = Color.rgb(isRed?0xFF:0, isGreen?0xFF:0, isBlue?0xFF:0);
-        paint.setColor(randomColor);
+        boolean isGreen = mRand.nextBoolean();
+        boolean isBlue =  mRand.nextBoolean();
+        int randomColor = Color.rgb(isRed?0xFF:0, isGreen?0xFF:0, isBlue?0xFF:0);
+        mPaint.setColor(randomColor);
     }
 
 
-    public int Move(int p_screen_width, int p_screen_height, Canvas p_canvas) {
+    public int Move(int screenWidth, int screenHeight, Canvas canvas) {
 
 
         // update sceen size & canvas
-        screen_width = p_screen_width;
-        screen_height = p_screen_height;
-        canvas = p_canvas;
+        mScreenWidth = screenWidth;
+        mScreenHeight = screenHeight;
 
         // Apply gravity to the ball
-        ball_speed_y += gravity;
+        mBallSpeedy += mGravity;
 
         // Move the ball
-        ball_x += (int) ball_speed_x;
-        ball_y += (int) ball_speed_y;
+        mBallX += (int) mBallSpeedX;
+        mBallY += (int) mBallSpeedy;
 
         // Bounce the ball off the walls
-        if (ball_x + ball_radius > screen_width) {
-            ball_x = screen_width - ball_radius;
-            ball_speed_x = -ball_speed_x;
-        } else if (ball_x - ball_radius < 0) {
-            ball_x = ball_radius;
-            ball_speed_x = -ball_speed_x;
+        if (mBallX + mBallRadius > mScreenWidth) {
+            mBallX = mScreenWidth - mBallRadius;
+            mBallSpeedX = -mBallSpeedX;
+        } else if (mBallX - mBallRadius < 0) {
+            mBallX = mBallRadius;
+            mBallSpeedX = -mBallSpeedX;
         }
-        if (ball_y + ball_radius > screen_height) {
-            ball_y = screen_height - ball_radius;
-            ball_speed_y = -ball_speed_y;
-        } else if (ball_y - ball_radius < 0) {
-            ball_y = ball_radius;
-            ball_speed_y = -ball_speed_y;
+        if (mBallY + mBallRadius > mScreenHeight) {
+            mBallY = mScreenHeight - mBallRadius;
+            mBallSpeedy = -mBallSpeedy;
+        } else if (mBallY - mBallRadius < 0) {
+            mBallY = mBallRadius;
+            mBallSpeedy = -mBallSpeedy;
         }
 
         // Draw the ball
-        canvas.drawCircle(ball_x, ball_y, ball_radius, paint);
+        canvas.drawCircle(mBallX, mBallY, mBallRadius, mPaint);
 
         // reduce speed when ball is near ground
         // (speed y is already reduced by numerical rounding)
-        int ball_height = (screen_height - ball_y);
+        int ball_height = (mScreenHeight - mBallY);
 
-        if (abs(ball_speed_y) < 2 && ball_height < 1.5 * ball_radius) {
-            ball_speed_x *= 0.99;
-            ball_speed_y *= 0.99;
+        if (abs(mBallSpeedy) < 2 && ball_height < 1.5 * mBallRadius) {
+            mBallSpeedX *= 0.99;
+            mBallSpeedy *= 0.99;
         }
 
         return (ball_height) ;

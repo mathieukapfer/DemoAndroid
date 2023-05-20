@@ -8,7 +8,6 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.ViewGroup;
 
 import java.util.Vector;
 import java.util.concurrent.Semaphore;
@@ -16,50 +15,53 @@ import java.util.concurrent.Semaphore;
 
 class BouncingBallsView implements Runnable {
 
-	private Thread thread = null;
-	private SurfaceView surf;
-	private SurfaceHolder surfaceHolder;
+	private Thread mThread = null;
+	private SurfaceView mSurf;
+	private SurfaceHolder mSurfaceHolder;
 	private volatile boolean running = false;
 
-	private Paint paint;
-    private Vector<BouncingBall> bouncingBallArray;
-	private Semaphore semaphore = new Semaphore(1, true);
+	private Paint mPaint;
+    private Vector<BouncingBall> mBouncingBallArray;
+	private Semaphore mSemaphore = new Semaphore(1, true);
 
-	public BouncingBallsView(Context p_context, SurfaceView p_surf) {
+	public BouncingBallsView(Context context, SurfaceView surf) {
 		//super(context);
 
-		surf = p_surf;
-		surfaceHolder = p_surf.getHolder();
+		mSurf = surf;
+		mSurfaceHolder = surf.getHolder();
 
-		paint = new Paint();
-		paint.setColor(Color.BLACK);
+		mPaint = new Paint();
+		mPaint.setColor(Color.BLACK);
 
-        bouncingBallArray = new Vector<BouncingBall>();
-		bouncingBallArray.add(new BouncingBall());
+		mBouncingBallArray = new Vector<BouncingBall>();
+		mBouncingBallArray.add(new BouncingBall());
 
 		// add on touch event handler to the bouncing ball surface
 		View.OnTouchListener listener = new View.OnTouchListener() {
 			@Override
 			public boolean onTouch(View view, MotionEvent motionEvent) {
 				try {
-					semaphore.acquire();
-					if (motionEvent.getX() < surf.getWidth() / 2) {
+					mSemaphore.acquire();
+					if (motionEvent.getX() < mSurf.getWidth() / 2) {
 						// touch left part of the screen
 						// => add a new ball
-						bouncingBallArray.add(new BouncingBall());
+						mBouncingBallArray.add(new BouncingBall());
 					} else {
 						// touch right part of the screen
 						// => remove the first one
-						if (bouncingBallArray.size() > 0) {
-							bouncingBallArray.remove(0);
+						if (mBouncingBallArray.size() > 0) {
+							mBouncingBallArray.remove(0);
 						}
 					}
-					semaphore.release();
-				} catch (Exception e) {}
+					mSemaphore.release();
+				} catch (Exception e) {
+					// ingore all
+				}
 				return false;
 			}
 		};
-		surf.setOnTouchListener(listener);
+
+		mSurf.setOnTouchListener(listener);
 
 
 	}
@@ -68,41 +70,41 @@ class BouncingBallsView implements Runnable {
 	public void run() {
 
 		while (running) {
-			if (surfaceHolder.getSurface().isValid()) {
+			if (mSurfaceHolder.getSurface().isValid()) {
 
 				int sum =0;
 				// prepare the drawing surface
-				Canvas canvas = surfaceHolder.lockCanvas();
+				Canvas canvas = mSurfaceHolder.lockCanvas();
 				canvas.drawColor(Color.BLACK);
 
                 // update ball
 				try {
-					semaphore.acquire();
-					for (BouncingBall b : bouncingBallArray) {
-						b.Move(surf.getWidth(), surf.getHeight(), canvas);
+					mSemaphore.acquire();
+					for (BouncingBall b : mBouncingBallArray) {
+						b.Move(mSurf.getWidth(), mSurf.getHeight(), canvas);
 					}
-					semaphore.release();
+					mSemaphore.release();
 				} catch(Exception e) {
 				}
 
 
 				// Unlock the canvas and update the screen
-				surfaceHolder.unlockCanvasAndPost(canvas);
+				mSurfaceHolder.unlockCanvasAndPost(canvas);
 			}
 		}
 	}
 
 	public void resume() {
 		running = true;
-		thread = new Thread(this);
-		thread.start();
+		mThread = new Thread(this);
+		mThread.start();
 	}
 
 	public void pause() {
 		running = false;
 		while (true) {
 			try {
-				thread.join();
+				mThread.join();
 				break;
 			} catch (InterruptedException e) {
 				// retry
