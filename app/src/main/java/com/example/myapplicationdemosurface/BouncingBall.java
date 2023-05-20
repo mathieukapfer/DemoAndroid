@@ -1,5 +1,7 @@
 package com.example.myapplicationdemosurface;
 
+import static java.lang.Math.abs;
+
 import java.util.Random;
 
 import android.graphics.Canvas;
@@ -24,7 +26,7 @@ class BouncingBall {
 	private int ball_y = 0;
 	private float ball_speed_x = 5;
 	private float ball_speed_y = 5;
-	private float gravity = 0.8f;
+	private float gravity = 0.9f;
 
     Canvas canvas;
 
@@ -35,13 +37,13 @@ class BouncingBall {
 		paint.setColor(Color.BLACK);
 
         // define random value.
-        // Note that it can be outisde the screen as 'Move' code will but it inside
+        // Note that it can be outside the screen as 'Move' code will but it inside
         // when screen sizes will be defined
         rand = new Random();
         ball_x = rand.nextInt(500);
         ball_y = rand.nextInt(500);
-        ball_speed_x = 5+rand.nextInt(10);
-        ball_speed_y = rand.nextInt(10);
+        ball_speed_x += 10 + rand.nextInt(10);
+        ball_speed_y += 20 + rand.nextInt(20);
 
         // color
         hasCrazyColor = rand.nextInt(10)>7;
@@ -95,13 +97,13 @@ class BouncingBall {
         // Draw the ball
         canvas.drawCircle(ball_x, ball_y, ball_radius, paint);
 
-        // reduce speed x when ball near ground
-        // (speed y is reduced by numerical rounding)
+        // reduce speed when ball is near ground
+        // (speed y is already reduced by numerical rounding)
         int ball_height = (screen_height - ball_y);
 
-        if (ball_height < 1.5 * ball_radius) {
+        if (abs(ball_speed_y) < 2 && ball_height < 1.5 * ball_radius) {
             ball_speed_x *= 0.99;
-            ball_speed_y *= 0.999;
+            ball_speed_y *= 0.99;
         }
 
         return (ball_height) ;
