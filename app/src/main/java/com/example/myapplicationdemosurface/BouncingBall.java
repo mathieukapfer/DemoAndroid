@@ -43,11 +43,10 @@ class BouncingBall {
         ball_x = rand.nextInt(500);
         ball_y = rand.nextInt(500);
         ball_speed_x += 10 + rand.nextInt(10);
-        ball_speed_y += 20 + rand.nextInt(20);
+        ball_speed_y += 10 + rand.nextInt(20);
 
         // color
-        hasCrazyColor = rand.nextInt(10)>7;
-        boolean isRed =   rand.nextBoolean();
+        boolean isRed =   true; //rand.nextBoolean();
         boolean isGreen = rand.nextBoolean();
         boolean isBlue =  rand.nextBoolean();
         randomColor = Color.rgb(isRed?0xFF:0, isGreen?0xFF:0, isBlue?0xFF:0);
@@ -57,14 +56,6 @@ class BouncingBall {
 
     public int Move(int p_screen_width, int p_screen_height, Canvas p_canvas) {
 
-
-        // special 'color' effect
-        if (hasCrazyColor && ((crazyColorCounter++)%10 == 0) ) {
-            randomColor = 0xFF000000 // keep alpha with max
-                    + (((randomColor & 0xFFFFFF) << 1 ) % 0xFFFFFF); // move luminance;
-            paint.setColor(randomColor);
-
-        }
 
         // update sceen size & canvas
         screen_width = p_screen_width;

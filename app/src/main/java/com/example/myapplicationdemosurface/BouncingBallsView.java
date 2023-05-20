@@ -73,7 +73,7 @@ class BouncingBallsView implements Runnable {
 				int sum =0;
 				// prepare the drawing surface
 				Canvas canvas = surfaceHolder.lockCanvas();
-				canvas.drawColor(0xFFBBBBBB);
+				canvas.drawColor(Color.BLACK);
 
                 // update ball
 				try {
